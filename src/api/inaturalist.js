@@ -1,16 +1,15 @@
 const BASE = 'https://api.inaturalist.org/v1'
-const PLANTS_TAXON_ID = 47126
 const PAGE_SIZE = 10
 
-export async function fetchObservations({ page = 1, location = null }) {
+export async function fetchObservations({ page = 1, location = null, taxonId }) {
   const params = new URLSearchParams({
-    taxon_id: PLANTS_TAXON_ID,
+    taxon_id: taxonId,
     photos: 'true',
     quality_grade: 'research',
     per_page: PAGE_SIZE,
     page,
     order: 'desc',
-    order_by: 'votes',
+    order_by: 'id',
   })
 
   if (location) {

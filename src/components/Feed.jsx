@@ -3,36 +3,55 @@ import { fetchObservations } from '../api/inaturalist'
 import Card from './Card'
 import './Feed.css'
 
-export default function Feed({ location }) {
+export default function Feed({ location, regionLabel, taxon }) {
   const [items, setItems] = useState([])
-  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const loadingRef = useRef(false)
   const pageRef = useRef(1)
+  const prefetchedRef = useRef(null)
+
+  const appendResults = useCallback((results) => {
+    const valid = results.filter(r => r.photos?.length > 0 && r.taxon)
+    if (valid.length === 0) {
+      setHasMore(false)
+    } else {
+      setItems(prev => {
+        const ids = new Set(prev.map(i => i.id))
+        return [...prev, ...valid.filter(i => !ids.has(i.id))]
+      })
+    }
+  }, [])
+
+  const prefetch = useCallback((pageNum) => {
+    if (prefetchedRef.current?.page === pageNum) return
+    prefetchedRef.current = {
+      page: pageNum,
+      promise: fetchObservations({ page: pageNum, location, taxonId: taxon.id }),
+    }
+  }, [location, taxon])
 
   const load = useCallback(async (pageNum) => {
     if (loadingRef.current) return
     loadingRef.current = true
     setLoading(true)
     try {
-      const results = await fetchObservations({ page: pageNum, location })
-      const valid = results.filter(r => r.photos?.length > 0 && r.taxon)
-      if (valid.length === 0) {
-        setHasMore(false)
+      let results
+      if (prefetchedRef.current?.page === pageNum) {
+        results = await prefetchedRef.current.promise
+        prefetchedRef.current = null
       } else {
-        setItems(prev => {
-          const ids = new Set(prev.map(i => i.id))
-          return [...prev, ...valid.filter(i => !ids.has(i.id))]
-        })
+        results = await fetchObservations({ page: pageNum, location, taxonId: taxon.id })
       }
+      appendResults(results)
+      prefetch(pageNum + 1)
     } catch (e) {
       console.error(e)
     } finally {
       loadingRef.current = false
       setLoading(false)
     }
-  }, [location])
+  }, [location, taxon, appendResults, prefetch])
 
   useEffect(() => {
     load(1)
@@ -55,6 +74,7 @@ export default function Feed({ location }) {
 
   return (
     <div className="feed">
+      <div className="feed-region">{regionLabel}</div>
       {items.map((item, idx) => (
         <Card
           key={item.id}
