@@ -10,6 +10,7 @@ export async function fetchObservations({ page = 1, location = null, taxonId }) 
     page,
     order: 'desc',
     order_by: 'id',
+    without_term_value_id: 19,
   })
 
   if (location) {

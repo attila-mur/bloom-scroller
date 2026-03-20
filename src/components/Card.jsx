@@ -4,14 +4,14 @@ import './Card.css'
 const Card = forwardRef(function Card({ observation }, ref) {
   const [imgLoaded, setImgLoaded] = useState(false)
   const photo = observation.photos[0]
-  const imgUrl = photo.url.replace('/square.', '/large.')
+  const imgUrl = photo.url.replace('/square.', '/medium.')
   const commonName = observation.taxon?.preferred_common_name
   const sciName = observation.taxon?.name
   const observer = observation.user?.login
 
   return (
     <div className="card" ref={ref}>
-      <div className={`card-img-wrap ${imgLoaded ? 'loaded' : ''}`}>
+      <div className={`card-photo-frame ${imgLoaded ? 'loaded' : ''}`}>
         <img
           src={imgUrl}
           alt={sciName}
@@ -20,11 +20,9 @@ const Card = forwardRef(function Card({ observation }, ref) {
           loading="lazy"
         />
       </div>
-      <div className="card-overlay">
-        <div className="card-names">
-          {commonName && <h1 className="card-common">{commonName}</h1>}
-          <p className="card-sci">{sciName}</p>
-        </div>
+      <div className="card-info">
+        {commonName && <h1 className="card-common">{commonName}</h1>}
+        <p className="card-sci">{sciName}</p>
         {observer && <p className="card-observer">© {observer}</p>}
       </div>
     </div>
