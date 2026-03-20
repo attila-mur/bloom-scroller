@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   width: 100%;
   height: 100dvh;
   scroll-snap-align: start;
@@ -10,13 +11,28 @@
   justify-content: center;
   gap: 1.5rem;
   padding: 2rem 1.5rem;
+  overflow: hidden;
+}
+
+.card-bg {
+  position: absolute;
+  inset: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  object-fit: cover;
+  filter: blur(40px) brightness(0.25) saturate(0.6);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .card-photo-frame {
-  width: min(320px, 70vw);
+  position: relative;
+  z-index: 1;
+  width: min(280px, 65vw);
   aspect-ratio: 1;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.04);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -30,20 +46,24 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+  display: block;
 }
 
 .card-info {
+  position: relative;
+  z-index: 1;
   text-align: center;
   max-width: min(320px, 70vw);
 }
 
 .card-common {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.4rem, 4.5vw, 2rem);
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
   font-weight: 400;
   color: #fff;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   margin-bottom: 0.4rem;
 }
 

@@ -11,6 +11,12 @@ const Card = forwardRef(function Card({ observation }, ref) {
 
   return (
     <div className="card" ref={ref}>
+      <img
+        src={imgUrl}
+        alt=""
+        className="card-bg"
+        aria-hidden="true"
+      />
       <div className={`card-photo-frame ${imgLoaded ? 'loaded' : ''}`}>
         <img
           src={imgUrl}
